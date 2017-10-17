@@ -2,45 +2,41 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput, ScrollView } from 'react-native';
 import SocketIOClient from 'socket.io-client'
 
+import EnterUserName from './src/EnterUserName'
+import ChatScreen from './src/ChatScreen'
+
 export default class App extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      text: ''
+      user: ''
     }
 
-    this.onMessageSubmit = this.onMessageSubmit.bind(this)
-    this.socket = SocketIOClient('http://localhost:3000')
-    this.socket.on('connect', function () {
-      console.log('Connected from React Native')
-    })
-    this.socket.on('newMessage', (message) => {
-      this.setState({text: `${this.state.text}\nFrom Server: ${message.text}`})      
-    })
+    this.setUserName = this.setUserName.bind(this)
   }
 
-  onMessageSubmit(e) {
-    this.setState({text: `${this.state.text}\n${e.nativeEvent.text}`})
-    this.socket.emit('createMessage', {
-      from: 'User',
-      text: e.nativeEvent.text
-    })
+  setUserName(name) {
+    this.setState({user: name.nativeEvent.text})
   }
 
   render() {
+    let view = null;
+    if (this.state.user)
+    {
+      view = <ChatScreen user={this.state.user} />
+    } else {
+      view = <EnterUserName setUserName={this.setUserName}/> 
+    }
+
     return (
-      <View style={{flex: 1,  
+      <View style={{ 
+          flex: 1,  
           flexDirection: 'column',
-          justifyContent: 'flex-start'}}>
-        <ScrollView>
-          <Text>Scroll Me!</Text>
-          <Text>{this.state.text}</Text>
-        </ScrollView>
-        <TextInput 
-          placeholder="Text Message"
-          onSubmitEditing={(newText) => this.onMessageSubmit(newText)}
-        />
+          alignItems: 'center',
+          justifyContent: 'center'
+      }}>
+        {view}
       </View>
     );
   }
