@@ -2,13 +2,15 @@ import React from 'react'
 import { StyleSheet, Text, View, TextInput, ScrollView } from 'react-native';
 import SocketIOClient from 'socket.io-client'
 
+import MessagesContainer from './messages/MessagesContainer'
+
 export default class ChatScreen extends React.Component {
     constructor(props) {
         super(props)
     
         this.state = {
-          text: '',
-          user: props.user
+          user: this.props.user,
+          messages: []
         }
     
         this.onMessageSubmit = this.onMessageSubmit.bind(this)
@@ -18,12 +20,13 @@ export default class ChatScreen extends React.Component {
           console.log('Connected from React Native')
         })
         this.socket.on('newMessage', (message) => {
-          this.setState({text: `${this.state.text}\n${message.from}: ${message.text}`})      
+          this.setState({messages: this.state.messages.concat([message])})
         })
         this.socket.on('newUser', (message) => {
-          this.setState({text: `${this.state.text}\n${message.from}: ${message.text}`})      
+          this.setState({messages: this.state.messages.concat([message])})
+          
         })
-        this.socket.emit('createMessage', {
+        this.socket.emit('createMessage', { 
             from: this.state.user,
             text: 'Welcome to the Chat App!'
         })
@@ -40,8 +43,7 @@ export default class ChatScreen extends React.Component {
         return (
             <View>
                 <ScrollView>
-                <Text>Scroll Me!</Text>
-                <Text>{this.state.text}</Text>
+                    <MessagesContainer messages={this.state} />
                 </ScrollView>
                 <TextInput 
                     placeholder="Text Message"

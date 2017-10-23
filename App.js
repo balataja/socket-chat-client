@@ -33,7 +33,6 @@ export default class App extends React.Component {
       <View style={{ 
           flex: 1,  
           flexDirection: 'column',
-          alignItems: 'center',
           justifyContent: 'center'
       }}>
         {view}
