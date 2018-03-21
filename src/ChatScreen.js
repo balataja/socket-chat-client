@@ -2,7 +2,8 @@ import React from 'react'
 import { StyleSheet, Text, View, TextInput, ScrollView } from 'react-native';
 import SocketIOClient from 'socket.io-client'
 
-import MessagesContainer from './messages/MessagesContainer'
+import MessagesContainer from './ChatComponents/MessagesContainer'
+import MessageInput from './ChatComponents/MessageInput'
 
 export default class ChatScreen extends React.Component {
     constructor(props) {
@@ -15,7 +16,7 @@ export default class ChatScreen extends React.Component {
     
         this.onMessageSubmit = this.onMessageSubmit.bind(this)
     
-        this.socket = SocketIOClient('http://localhost:3000')
+        this.socket = SocketIOClient('https://socket-chat-backend.herokuapp.com/');
         this.socket.on('connect', function () {
           console.log('Connected from React Native')
         })
@@ -42,13 +43,16 @@ export default class ChatScreen extends React.Component {
     render() {
         return (
             <View>
+                <Text>Chat Screen</Text>
                 <ScrollView>
                     <MessagesContainer messages={this.state} />
                 </ScrollView>
                 <TextInput 
+                    style={{ alignItems: 'flex-end' }}
                     placeholder="Text Message"
                     onSubmitEditing={(newText) => this.onMessageSubmit(newText)}
                 />
+                <MessageInput onSubmit={this.onMessageSubmit} />
             </View>
         )
     }
